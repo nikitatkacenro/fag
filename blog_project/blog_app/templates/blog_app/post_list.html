@@ -1,0 +1,50 @@
+{% extends "blog_app/base.html" %}
+
+{% block title %}Список постов{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-4">Продажи</h1>
+<div class="row">
+  {% for post in posts %}
+  <div class="col-md-12 mb-4">
+    <div class="card">
+      {% if post.image %}
+      <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}">
+      {% endif %}
+      <div class="card-body">
+        <h5 class="card-title text-center">
+          <a href="{% url 'post_detail' post.id %}" class="stretched-link text-decoration-none">{{ post.title }}</a>
+        </h5>
+        <p class="card-text">{{ post.content|truncatewords:30 }}</p>
+        <div class="text-center">
+          <button class="btn btn-danger like-button" data-post-id="{{ post.id }}">💀 {{ post.likes.count }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".like-button").forEach(button => {
+        button.addEventListener("click", function() {
+            let postId = this.dataset.postId;
+            fetch(`/post/${postId}/like/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                this.innerText = `💀 ${data.likes}`;
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "blog_app/base.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<h1 class="text-center">{{ post.title }}</h1>
+{% if post.image %}
+<div class="text-center mb-3">
+    <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid">
+</div>
+{% endif %}
+<p>{{ post.content }}</p>
+
+<div class="text-center mb-3">
+  <button class="btn btn-danger like-button" data-post-id="{{ post.id }}">💀 {{ post.likes.count }}</button>
+</div>
+
+<h2 class="mt-4">Комментарии</h2>
+<button id="toggle-comments" class="btn btn-secondary mb-3">Показать комментарии</button>
+<div id="comments-section" style="display: none;">
+  {% for comment in post.comments.all %}
+  <div class="card mb-2">
+    <div class="card-body">
+      <h5 class="card-title">{{ comment.author }}</h5>
+      <p class="card-text">{{ comment.content }}</p>
+      <button class="btn btn-sm btn-danger like-comment-button" data-comment-id="{{ comment.id }}">💀 {{ comment.likes.count }}</button>
+    </div>
+  </div>
+  {% empty %}
+  <p>Нет комментариев</p>
+  {% endfor %}
+</div>
+
+<hr>
+<h3>Добавить комментарий</h3>
+<form method="post" action="{% url 'add_comment' post.id %}">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary">Отправить</button>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById("toggle-comments").addEventListener("click", function() {
+    var section = document.getElementById("comments-section");
+    section.style.display = section.style.display === "none" ? "block" : "none";
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".like-button").forEach(button => {
+        button.addEventListener("click", function() {
+            let postId = this.dataset.postId;
+            fetch(`/post/${postId}/like/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                this.innerText = `💀 ${data.likes}`;
+            });
+        });
+    });
+
+    document.querySelectorAll(".like-comment-button").forEach(button => {
+        button.addEventListener("click", function() {
+            let commentId = this.dataset.commentId;
+            fetch(`/comment/${commentId}/like/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                this.innerText = `💀 ${data.likes}`;
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
