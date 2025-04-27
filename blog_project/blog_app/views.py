@@ -27,8 +27,8 @@ def add_comment(request, post_id):
 
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    Like.objects.create(post=post)
-    return JsonResponse({'likes': post.likes.count()})
+    Like.objects.get_or_create(user=request.user, post=post)
+    return redirect('post_detail', post_id=post_id)
 
 def like_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
