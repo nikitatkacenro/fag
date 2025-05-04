@@ -10,12 +10,12 @@ class PostAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('post','author','created_at')
-    search_fields = ('author','content')
+    list_display = ('post','user','created_at')
+    search_fields = ('user','content')
 
 
 @admin.register(Like)
-class CommentAdmin(admin.ModelAdmin):
-    list_display = ('post','comment','created_at')
-    search_fields = ('post','comment')
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ('post','created_at')
+    search_fields = ('post',)
 
