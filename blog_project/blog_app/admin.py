@@ -1,6 +1,11 @@
 from django.contrib import admin
 from .models import Post, Comment, Like
+from .models import Author
 
+@admin.register(Author)
+class AuthorAdmin(admin.ModelAdmin):
+    search_fields = ['name']
+    list_display = ['name']
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):

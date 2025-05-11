@@ -29,5 +29,9 @@ class Like(models.Model):
     def __str__(self):
         return f'Like by {self.user.username} on {self.post.title}'
 
+class Author(models.Model):
+    name = models.CharField(max_length=100, unique=True, verbose_name="Имя автора")
 
+    def __str__(self):
+        return self.name
 

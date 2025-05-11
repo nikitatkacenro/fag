@@ -3,6 +3,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .forms import PostForm
 from .forms import CommentForm
 from .models import Post, Comment, Like
+from .models import Author
+from .forms import AuthorForm
 
 def post_list(request):
     posts = Post.objects.all()
@@ -49,10 +51,31 @@ def register(request):
 
 def create_post(request):
     if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)  # Важно: передаем FILES
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('post_list')
     else:
         form = PostForm()
     return render(request, 'create_post.html', {'form': form})
+
+def add_author(request):
+    if request.method == 'POST':
+        form = AuthorForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('authors_list')
+    else:
+        form = AuthorForm()
+    return render(request, 'add_author.html', {'form': form})
+
+def add_book(request):
+    if request.method == 'POST':
+        author_name = request.POST.get('author')
+        author, created = Author.objects.get_or_create(
+            name=author_name.strip(),
+            defaults={'name': author_name}
+        )
+        if not created:
+            pass
+    return render(...)
