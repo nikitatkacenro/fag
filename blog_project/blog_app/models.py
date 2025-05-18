@@ -1,10 +1,24 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+
+class CustomUser(AbstractUser):
+    bio = models.TextField(max_length=500, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
+    pass
+class Author(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(blank=True, null=True)
+    birth_date = models.DateField(null=True, blank=True)
+    website = models.URLField(blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username
 
 class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='posts')
     created_at = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='posts/', blank=True, null=True)
     file = models.FileField(upload_to='posts/files/', blank=True, null=True)
@@ -28,10 +42,3 @@ class Like(models.Model):
 
     def __str__(self):
         return f'Like by {self.user.username} on {self.post.title}'
-
-class Author(models.Model):
-    name = models.CharField(max_length=100, unique=True, verbose_name="Имя автора")
-
-    def __str__(self):
-        return self.name
-

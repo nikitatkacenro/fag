@@ -5,6 +5,17 @@ from .forms import CommentForm
 from .models import Post, Comment, Like
 from .models import Author
 from .forms import AuthorForm
+from .forms import RegisterForm
+
+def register(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = RegisterForm()
+    return render(request, 'registration/register.html', {'form': form})
 
 def post_list(request):
     posts = Post.objects.all()
@@ -37,17 +48,6 @@ def like_comment(request, comment_id):
     Like.objects.create(comment=comment)
     return JsonResponse({'likes': comment.likes.count()})
 
-def register(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Account created for {username}!')
-            return redirect('login')
-    else:
-        form = UserCreationForm()
-    return render(request, 'accounts/register.html', {'form': form})
 
 def create_post(request):
     if request.method == 'POST':

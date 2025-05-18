@@ -1,7 +1,16 @@
-from django import forms
 from .models import Comment
 from .models import Post
 from .models import Author
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField()
+
+    class Meta:
+        model = User
+        fields = ["username", "email", "password1", "password2"]
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
@@ -20,10 +29,13 @@ class PostForm(forms.ModelForm):
 class AuthorForm(forms.ModelForm):
     class Meta:
         model = Author
-        fields = ['name']
-        labels = {'name': 'Имя автора'}
+        fields = ['user', 'bio', 'birth_date', 'website']
+        labels = {'bio': 'Био автора', 'birth_date': 'Дата рождения', 'website': 'Сайт автора'}
+        widgets = {
+            'user': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ваше имя'}),
+        }
 
     def clean_name(self):
-        name = self.cleaned_data['name']
+        name = self.cleaned_data['user']
         if Author.objects.filter(name__iexact=name).exists():
             raise forms.ValidationError("Этот автор уже существует!")

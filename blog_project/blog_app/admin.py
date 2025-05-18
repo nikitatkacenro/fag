@@ -4,8 +4,7 @@ from .models import Author
 
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
-    search_fields = ['name']
-    list_display = ['name']
+    search_fields = ['bio']
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
