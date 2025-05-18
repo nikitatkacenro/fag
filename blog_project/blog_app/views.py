@@ -12,14 +12,16 @@ def register(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login')
+            return redirect('/login')
     else:
         form = RegisterForm()
-    return render(request, 'registration/register.html', {'form': form})
+    return render(request, 'blog_app/register.html', {'form': form})
+
 
 def post_list(request):
     posts = Post.objects.all()
     return render(request, 'blog_app/post_list.html', {'posts': posts})
+
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -43,6 +45,7 @@ def like_post(request, post_id):
     Like.objects.get_or_create(user=request.user, post=post)
     return redirect('post_detail', post_id=post_id)
 
+
 def like_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
     Like.objects.create(comment=comment)
@@ -57,7 +60,8 @@ def create_post(request):
             return redirect('post_list')
     else:
         form = PostForm()
-    return render(request, 'create_post.html', {'form': form})
+    return render(request, 'blog_app/create_post.html', {'form': form})
+
 
 def add_author(request):
     if request.method == 'POST':
@@ -67,7 +71,8 @@ def add_author(request):
             return redirect('authors_list')
     else:
         form = AuthorForm()
-    return render(request, 'add_author.html', {'form': form})
+    return render(request, 'blog_app/add_author.html', {'form': form})
+
 
 def add_book(request):
     if request.method == 'POST':

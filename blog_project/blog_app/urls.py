@@ -10,6 +10,6 @@ urlpatterns = [
     path('post/<int:post_id>/like/', views.like_post, name='like_post'),
     path('comment/<int:comment_id>/like/', views.like_comment, name='like_comment'),
     path('register/', register, name='register'),
-    path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(template_name='accounts/logout.html'), name='logout'),
+    path('login/', auth_views.LoginView.as_view(template_name='blog_app/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='blog_app/logout.html'), name='logout'),
 ]

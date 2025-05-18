@@ -2,9 +2,11 @@ from django.contrib import admin
 from .models import Post, Comment, Like
 from .models import Author
 
+
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
     search_fields = ['bio']
+
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
@@ -22,4 +24,3 @@ class CommentAdmin(admin.ModelAdmin):
 class LikeAdmin(admin.ModelAdmin):
     list_display = ('post','created_at')
     search_fields = ('post',)
-

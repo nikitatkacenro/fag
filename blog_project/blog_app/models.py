@@ -2,10 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 
-class CustomUser(AbstractUser):
-    bio = models.TextField(max_length=500, blank=True)
-    birth_date = models.DateField(null=True, blank=True)
-    pass
+
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True)
@@ -14,6 +11,7 @@ class Author(models.Model):
 
     def __str__(self):
         return self.user.username
+
 
 class Post(models.Model):
     title = models.CharField(max_length=100)
@@ -34,6 +32,7 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comment by {self.user.username} on {self.post.title}'
+
 
 class Like(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
