@@ -1,48 +1,37 @@
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404, redirect
-from .forms import PostForm
-from .forms import CommentForm
-from .models import Post, Comment, Like
-from .models import Author
-from .forms import AuthorForm
-from .forms import RegisterForm
-import random
+from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
-from .forms import AuthorChoiceForm
 
-def author_choice(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
+from .forms import AuthorForm
+from .forms import CommentForm
+from .forms import PostForm
+from .forms import RegisterForm
+from .models import Author
+from .models import Post, Comment, Like
 
+
+@login_required
+def make_author(request):
+    user = User.objects.get(username=request.user)
     if request.method == 'POST':
-        form = AuthorChoiceForm(request.POST)
-        if form.is_valid():
-            choice = form.cleaned_data['want_author']
-
-            if choice == 'yes':
-                # Шанс 50% стать автором
-                if random.random() < 0.5:
-                    request.user.is_author = True
-                    request.user.save()
-                    message = "🎉 Поздравляем! Теперь вы Автор!"
-                else:
-                    message = "😢 Увы, не повезло. Попробуйте в другой раз!"
-            else:
-                message = "Вы отказались от шанса стать автором."
-
-            return render(request, 'registration/author_result.html', {'message': message})
+        if author := Author.objects.filter(user=user).first():
+            return render(request, 'blog_app/author_created.html', {'author': author, 'created': False})
+        else:
+            author = Author.objects.create(
+                user=user
+            )
+            return render(request, 'blog_app/author_created.html', {'author': author, "created": True})
     else:
-        form = AuthorChoiceForm()
+        return render(request, 'blog_app/author_choice.html')
 
-    return render(request, 'registration/author_choice.html', {'form': form})
 
 
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('/login')
         if form.is_valid():
             user = form.save()
             login(request, user)
@@ -50,6 +39,8 @@ def register(request):
     else:
         form = RegisterForm()
     return render(request, 'blog_app/register.html', {'form': form})
+
+
 def post_list(request):
     posts = Post.objects.all()
     return render(request, 'blog_app/post_list.html', {'posts': posts})

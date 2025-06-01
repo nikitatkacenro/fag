@@ -2,8 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 
-class CustomUser(AbstractUser):
-    is_author = models.BooleanField(default=False, verbose_name="Автор?")
 
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

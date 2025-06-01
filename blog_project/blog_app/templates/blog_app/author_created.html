@@ -1,0 +1,9 @@
+{% extends 'blog_app/base.html' %}
+
+{% block content %}
+{% if created %}
+<h2>{{ author.user.username }}, Вы стали автором!</h2>
+{% else %}
+<h2>{{ author.user.username }}, Вы уже являетесь автором.</h2>
+{% endif %}
+{% endblock %}
