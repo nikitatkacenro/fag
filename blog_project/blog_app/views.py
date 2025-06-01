@@ -1,4 +1,4 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import JsonResponse
@@ -39,6 +39,11 @@ def register(request):
     else:
         form = RegisterForm()
     return render(request, 'blog_app/register.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return render(request, 'blog_app/logout.html')
 
 
 def post_list(request):
